@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MorKor Result</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: "Noto Sans Thai", sans-serif;
+            background: #f5f7fa;
+            display: flex;             /* เพิ่ม flex */
+            flex-direction: column;    /* เรียงจากบนลงล่าง */
+            align-items: center;       /* จัดกึ่งกลางแนวนอน */
+            justify-content: center;   /* จัดกึ่งกลางแนวตั้ง */
+            min-height: 100vh;         /* ให้เต็มความสูง viewport */
+            gap: 40px;
+            margin: 0;                 /* ลบ margin เดิม */
+            padding: 30px 0;
+        }
+
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 20px;
+            background: #fff;
+            padding: 20px;
+            width: 320px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+        }
+
+        .form label {
+            font-weight: 600;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .form input[type="text"] {
+            width: 90%;
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 6px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+        }
+
+        /* CARD */
+        .card {
+            border: 1px solid #f5f5f5;
+            width: 700px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .card-body {
+            background: linear-gradient(135deg, #F4F3F8 0%, #EAEBEF 100%);
+            padding: 25px 30px;
+            padding-right: 220px;
+            position: relative;
+        }
+
+        h4 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: 0.2s;
+        }
+
+        .result-card-body {
+            background: #FFFFFF;
+            padding: 40px 25px 20px;
+        }
+
+        .reserve-order {
+            background: linear-gradient(135deg, #0FB380 0%, #15A06D 100%);
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        i {
+            margin-right: 5px;
+        }
+
+        footer {
+                    width: 100%;
+                    text-align: center;
+                    padding: 15px 0;
+                    background: #f5f7fa;
+                    color: #555;
+                    font-size: 14px;
+                    position: fixed; /* สามารถเปลี่ยนเป็น fixed ถ้าต้องการติดขอบล่างตลอด */
+                    bottom: 0;
+                    margin-top: 50px;   /* เว้นระยะจากเนื้อหา */
+                }
+
+                #downloadBtn {
+    background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 100px;
+}
+
+#downloadBtn:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #003f7f 100%);
+}
+                    </style>
+</head>
+
+<body>
+
+    <!-- ฟอร์มแยก -->
+    <div class="form">
+        <form>
+            <label>ชื่อคณะ</label>
+            <input id="facultyInput" type="text" placeholder="ตัวอย่าง: ศษ.บ. (คอมพิวเตอร์ศึกษา)">
+
+            <label>ชื่อสาขา</label>
+            <input id="majorInput" type="text" placeholder="วิชาเอกคอมพิวเตอร์ศึกษา">
+
+            <label>ชื่อโครงการ</label>
+            <input id="projectInput" type="text" placeholder="โครงการผลิตครู...">
+
+            <label>สถานะการสัมภาษณ์</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" class="statusCheck" value="true"> ผ่านการสอบสัมภาษณ์ตัวจริง</label>
+                <label><input type="checkbox" class="statusCheck" value="reserve"> ผ่านการสอบสัมภาษณ์ตัวสำรอง</label>
+                <label><input type="checkbox" class="statusCheck" value="fail"> ไม่ผ่านการสอบสัมภาษณ์</label>
+            </div>
+            <p style="font-size: small;">(เลข 5 หลักข้างล่างเป็นการสุ่มนะจ้ะ)</p>
+        </form>
+    </div>
+
+    <!-- การ์ด -->
+    <div class="card">
+        <div class="card-body">
+            <h4 id="cardTitle">ศษ.บ. (คอมพิวเตอร์ศึกษา) ศึกษาศาสตรบัณฑิต วิชาเอกคอมพิวเตอร์ศึกษา</h4>
+
+            <p class="subtitle" id="subtitleTxt">
+                คณะศึกษาศาสตร์ • โครงการ...<br>
+                <span id="randomId" style="color:#252525;"></span>
+            </p>
+
+            <div class="result-badge" id="badge" style="background:#0FB380;">
+                <i class="fa fa-check-circle"></i> 
+                ผ่านการสอบสัมภาษณ์ตัวจริง
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+    <button id="downloadBtn">
+        <i class="fa fa-download"></i> Download
+    </button>
+</div>
+
+    <footer>
+    <p>© 2025 สร้างโดย ณัฏฐชัย. All rights reserved.</p>
+</footer>
+
+
+<script>
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+    const card = document.querySelector(".card"); // เลือกการ์ด
+
+    html2canvas(card).then(canvas => {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png"); // แปลง canvas เป็น PNG
+        link.download = "result_card.png";        // ตั้งชื่อไฟล์
+        link.click();
+        });
+    });
+    // RANDOM 5 DIGIT ID
+    document.getElementById("randomId").innerText = "(" + Math.floor(10000 + Math.random() * 90000) + ")";
+
+    // Update title
+    const facultyInput = document.getElementById("facultyInput");
+    const majorInput = document.getElementById("majorInput");
+    const projectInput = document.getElementById("projectInput");
+
+    function updateTitle() {
+        const faculty = facultyInput.value || "ศษ.บ. (คอมพิวเตอร์ศึกษา)";
+        const major = majorInput.value || "วิชาเอกคอมพิวเตอร์ศึกษา";
+
+        document.getElementById("cardTitle").innerText = `${faculty} ${major}`;
+    }
+
+    facultyInput.addEventListener("input", updateTitle);
+    majorInput.addEventListener("input", updateTitle);
+
+    // Update subtitle (project)
+    projectInput.addEventListener("input", () => {
+        const project = projectInput.value || "โครงการผลิตครูขี้เหล้าเข้า มข.";
+        document.getElementById("subtitleTxt").innerHTML = `
+            ${project}<br>
+            <span id="randomId" style="color:#252525;">(${Math.floor(10000 + Math.random() * 90000)})</span>
+        `;
+    });
+
+    // Checkbox select-one
+    const checkboxes = document.querySelectorAll(".statusCheck");
+    const badge = document.getElementById("badge");
+    
+    checkboxes.forEach(cb => {
+        cb.addEventListener("change", () => {
+
+            // uncheck all others
+            checkboxes.forEach(other => {
+                if (other !== cb) other.checked = false;
+            });
+
+            let status = cb.value;
+
+            if (status === "true") {
+                badge.style.background = "linear-gradient(135deg,#0FB380,#15A06D)";
+                badge.innerHTML = `<i class="fa fa-check-circle"></i> ผ่านการสอบสัมภาษณ์ตัวจริง`;
+            }
+
+            else if (status === "reserve") {
+                badge.style.background = "linear-gradient(135deg,#F39C0B,#DB7A06)";
+                badge.innerHTML = `<i class="fa fa-check-circle"></i> ผ่านการสอบสัมภาษณ์ตัวสำรอง`;
+            }
+
+            else if (status === "fail") {
+                badge.style.background = "linear-gradient(135deg,#F20B0B,#DC0606)";
+                badge.innerHTML = `<i class="fa fa-xmark"></i> ไม่ผ่านการสอบสัมภาษณ์`;
+            }
+
+        });
+    });
+</script>
+
+</body>
+</html>
